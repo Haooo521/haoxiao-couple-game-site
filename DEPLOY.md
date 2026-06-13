@@ -11,7 +11,7 @@
 5. 部署完成后会得到一个类似下面的永久地址：
 
 ```txt
-https://haoxiao-couple-game-site.onrender.com
+https://haotang-couple-game-site.onrender.com
 ```
 
 ## Railway

@@ -1,8 +1,8 @@
 "use client";
 
-const PLAYER_KEY = "haoxiao-player-id";
-const ROOM_KEY = "haoxiao-room-code";
-const NICKNAME_KEY = "haoxiao-nickname";
+const PLAYER_KEY = "haotang-player-id";
+const ROOM_KEY = "haotang-room-code";
+const NICKNAME_KEY = "haotang-nickname";
 
 export function saveSession(playerId: string, roomCode: string, nickname: string) {
   localStorage.setItem(PLAYER_KEY, playerId);

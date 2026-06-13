@@ -23,7 +23,7 @@ app.use(cors({ origin: clientOrigin }));
 app.use(express.json());
 
 app.get("/health", (_request, response) => {
-  response.json({ ok: true, service: "haoxiao-couple-play-realtime" });
+  response.json({ ok: true, service: "haotang-couple-play-realtime" });
 });
 
 const server = http.createServer(app);

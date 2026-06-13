@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: haoxiao-couple-game-site
+    name: haotang-couple-game-site
     env: docker
     plan: free
     autoDeploy: true
