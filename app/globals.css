@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  background: #fff8ed;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: #5c3951;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 126, 182, 0.34), transparent 24%),
+    radial-gradient(circle at 86% 12%, rgba(200, 165, 255, 0.38), transparent 24%),
+    radial-gradient(circle at 78% 78%, rgba(157, 216, 255, 0.36), transparent 28%),
+    linear-gradient(135deg, #fff8ed 0%, #fff1f7 47%, #f4edff 100%);
+  min-height: 100vh;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.sweet-pattern {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sweet-pattern span {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 12px 35px rgba(255, 126, 182, 0.16);
+  font-size: 26px;
+}
+
+.sweet-pattern span:nth-child(1) { left: 7%; top: 14%; }
+.sweet-pattern span:nth-child(2) { right: 10%; top: 18%; }
+.sweet-pattern span:nth-child(3) { left: 16%; bottom: 16%; }
+.sweet-pattern span:nth-child(4) { right: 20%; bottom: 13%; }
+.sweet-pattern span:nth-child(5) { left: 48%; top: 9%; }
+.sweet-pattern span:nth-child(6) { right: 43%; bottom: 8%; }
+
+@media (max-width: 640px) {
+  .sweet-pattern span {
+    width: 42px;
+    height: 42px;
+    font-size: 21px;
+  }
+}

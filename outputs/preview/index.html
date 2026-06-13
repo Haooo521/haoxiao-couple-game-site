@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>豪豪和小糖豆的游戏网站</title>
+    <meta name="description" content="这是只属于我们的小游戏宇宙" />
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; color: #5c3951; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 12% 18%, rgba(255,126,182,.34), transparent 24%), radial-gradient(circle at 86% 12%, rgba(200,165,255,.38), transparent 24%), radial-gradient(circle at 78% 78%, rgba(157,216,255,.32), transparent 28%), linear-gradient(135deg, #fff8ed 0%, #fff1f7 47%, #f4edff 100%); }
+      button, input, select { font: inherit; }
+      button { min-height: 44px; border: 0; border-radius: 999px; background: #5c3951; color: white; padding: 0 16px; font-weight: 900; cursor: pointer; transition: transform .18s ease, opacity .18s ease; }
+      button:hover { transform: translateY(-1px); }
+      button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+      input, select { width: 100%; height: 46px; border-radius: 8px; border: 1px solid rgba(255,126,182,.24); background: #fff8ed; padding: 0 14px; color: #5c3951; font-weight: 800; outline: none; }
+      .page { position: relative; min-height: 100vh; overflow: hidden; }
+      .pattern { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+      .pattern span { position: absolute; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 999px; background: rgba(255,255,255,.72); box-shadow: 0 12px 35px rgba(255,126,182,.16); font-size: 24px; animation: float 6s ease-in-out infinite; }
+      .pattern span:nth-child(1) { left: 7%; top: 14%; }
+      .pattern span:nth-child(2) { right: 10%; top: 18%; animation-delay: .8s; }
+      .pattern span:nth-child(3) { left: 16%; bottom: 16%; animation-delay: 1.2s; }
+      .pattern span:nth-child(4) { right: 20%; bottom: 13%; animation-delay: 1.8s; }
+      .pattern span:nth-child(5) { left: 48%; top: 9%; animation-delay: 2.2s; }
+      .pattern span:nth-child(6) { right: 43%; bottom: 8%; animation-delay: 2.7s; }
+      @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+      header, main { position: relative; z-index: 1; width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+      header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; }
+      .brand { display: flex; align-items: center; gap: 12px; font-weight: 1000; }
+      .logo { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 18px; background: rgba(255,255,255,.82); color: #ff7eb6; box-shadow: 0 18px 60px rgba(255,126,182,.18); }
+      .pill, .tag { border-radius: 999px; background: rgba(255,255,255,.76); padding: 8px 12px; font-size: 12px; font-weight: 900; color: rgba(92,57,81,.75); box-shadow: 0 14px 34px rgba(255,126,182,.13); }
+      main { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr); gap: 28px; align-items: start; padding: 20px 0 56px; }
+      .eyebrow { display: inline-flex; border-radius: 999px; background: rgba(255,255,255,.72); padding: 9px 15px; font-weight: 900; box-shadow: 0 18px 60px rgba(255,126,182,.15); }
+      h1 { margin: 20px 0 0; font-size: clamp(38px, 6vw, 66px); line-height: 1.05; letter-spacing: 0; }
+      h2 { margin: 0; font-size: 22px; }
+      h3 { margin: 0; font-size: 18px; }
+      .subtitle { margin: 18px 0 0; font-size: 20px; line-height: 1.7; font-weight: 800; color: rgba(92,57,81,.72); }
+      .panel, .card, .room, .game { border: 1px solid rgba(255,255,255,.72); background: rgba(255,255,255,.82); border-radius: 8px; box-shadow: 0 18px 60px rgba(255,126,182,.18); }
+      .panel { margin-top: 26px; padding: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      label { grid-column: 1 / -1; display: grid; gap: 8px; font-size: 14px; font-weight: 900; }
+      .join { display: flex; gap: 8px; }
+      .join input { text-align: center; letter-spacing: .2em; }
+      .error { grid-column: 1 / -1; min-height: 20px; margin: 0; color: #e11d48; font-size: 14px; font-weight: 900; }
+      .section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+      .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+      .filter { min-height: 36px; background: rgba(255,255,255,.78); color: #5c3951; box-shadow: 0 10px 26px rgba(92,57,81,.08); }
+      .filter.active { background: #5c3951; color: white; }
+      .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .card { padding: 16px; text-align: left; color: inherit; position: relative; overflow: hidden; }
+      .card.selected { outline: 4px solid rgba(255,126,182,.22); border-color: #ff7eb6; }
+      .bar { height: 7px; border-radius: 99px; margin-bottom: 14px; background: linear-gradient(90deg, #ff9fc3, #c8a5ff, #9dd8ff); }
+      .card p { margin: 9px 0 0; color: rgba(92,57,81,.68); line-height: 1.55; font-weight: 700; font-size: 13px; }
+      .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+      .meta span { border-radius: 999px; background: #fff8ed; padding: 5px 8px; font-size: 11px; font-weight: 900; color: rgba(92,57,81,.74); }
+      .room, .game { display: none; margin-top: 24px; padding: 20px; }
+      .room.active, .game.active { display: block; }
+      .room-code { margin: 8px 0 0; font-size: 42px; font-weight: 1000; letter-spacing: .08em; }
+      .member, .level-box { margin-top: 12px; display: flex; justify-content: space-between; gap: 12px; border-radius: 8px; background: #fff8ed; padding: 14px 16px; font-weight: 900; }
+      .hint { margin: 14px 0 0; color: rgba(92,57,81,.65); font-weight: 800; line-height: 1.6; }
+      .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+      .secondary { background: white; color: #5c3951; box-shadow: 0 10px 30px rgba(92,57,81,.08); }
+      .danger { background: #ffe4ec; color: #9f1239; }
+      .answers, .swatches, .memory-grid { display: grid; gap: 12px; margin-top: 16px; }
+      .answers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .memory-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .answer { background: linear-gradient(135deg, #ff7eb6, #c8a5ff); min-height: 62px; }
+      .result { margin-top: 16px; border-radius: 8px; background: #fff8ed; padding: 16px; font-weight: 900; line-height: 1.75; }
+      .big-tap { width: min(230px, 100%); height: 180px; border-radius: 999px; font-size: 26px; background: linear-gradient(135deg, #ff7eb6, #c8a5ff); }
+      .swatch, .memory-card { min-height: 84px; border-radius: 8px; color: #5c3951; background: white; border: 2px solid rgba(255,255,255,.9); }
+      .memory-card { font-size: 28px; background: linear-gradient(135deg, #fff8ed, #f4edff); }
+      .dot { display: block; width: 34px; height: 34px; margin: 0 auto 8px; border-radius: 999px; }
+      .progress { margin-top: 12px; height: 10px; border-radius: 999px; background: rgba(92,57,81,.1); overflow: hidden; }
+      .progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #ff7eb6, #c8a5ff); }
+      @media (max-width: 900px) { main { grid-template-columns: 1fr; } .cards { grid-template-columns: 1fr; } }
+      @media (max-width: 640px) { header { align-items: flex-start; } .pill { display: none; } .panel, .answers, .swatches { grid-template-columns: 1fr; } .memory-grid { grid-template-columns: repeat(3, 1fr); } }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="pattern" aria-hidden="true"><span>♡</span><span>✦</span><span>🎮</span><span>糖</span><span>♥</span><span>豆</span></div>
+      <header>
+        <div class="brand"><span class="logo">♥</span><span>豪豪和小糖豆的游戏网站</span></div>
+        <div class="pill" id="statusPill">实时甜蜜连线</div>
+      </header>
+      <main>
+        <section>
+          <div class="eyebrow">✦ 恋爱小游戏宇宙</div>
+          <h1>豪豪和小糖豆的游戏网站</h1>
+          <p class="subtitle">这是只属于我们的小游戏宇宙</p>
+
+          <div class="panel" id="entryPanel">
+            <label>昵称<input id="nickname" placeholder="例如：豪豪 / 小糖豆" /></label>
+            <button id="createRoom">创建甜蜜房间</button>
+            <div class="join"><input id="roomCodeInput" placeholder="6 位房间码" maxlength="6" /><button id="joinRoom">加入游戏房间</button></div>
+            <p class="error" id="errorText"></p>
+          </div>
+
+          <div class="room" id="roomPanel">
+            <div class="eyebrow">等待小伙伴加入</div>
+            <div class="room-code" id="roomCode">------</div>
+            <div id="members"></div>
+            <div class="level-box" id="selectedInfo"></div>
+            <div class="level-box">
+              <label>玩法模式<select id="modeSelect"></select></label>
+            </div>
+            <div class="level-box">
+              <label>关卡选择<select id="levelSelect"></select></label>
+            </div>
+            <p class="hint" id="roomHint"></p>
+            <div class="actions">
+              <button id="startGame" disabled>开始挑战</button>
+              <button class="secondary" id="copyCode">复制房间码</button>
+              <button class="danger" id="leaveRoom">离开房间</button>
+            </div>
+          </div>
+
+          <div class="game" id="gamePanel">
+            <div class="eyebrow" id="roundText"></div>
+            <h2 id="promptText"></h2>
+            <div id="levelPanel"></div>
+            <div id="gameBody"></div>
+            <div class="result" id="resultBox"></div>
+            <div class="actions" id="gameActions">
+              <button class="secondary" id="backRoom">回到游戏大厅</button>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="section-title">
+            <h2>游戏大厅</h2>
+            <span class="tag" id="gameCount">加载中</span>
+          </div>
+          <div class="filters" id="filters"></div>
+          <section class="cards" id="gameCards"></section>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const el = (id) => document.getElementById(id);
+      const entryPanel = el("entryPanel"), roomPanel = el("roomPanel"), gamePanel = el("gamePanel");
+      const nickname = el("nickname"), roomCodeInput = el("roomCodeInput"), createRoom = el("createRoom"), joinRoom = el("joinRoom");
+      const errorText = el("errorText"), statusPill = el("statusPill"), roomCode = el("roomCode"), members = el("members"), roomHint = el("roomHint");
+      const startGame = el("startGame"), leaveRoom = el("leaveRoom"), copyCode = el("copyCode"), modeSelect = el("modeSelect"), levelSelect = el("levelSelect");
+      const selectedInfo = el("selectedInfo"), roundText = el("roundText"), promptText = el("promptText"), levelPanel = el("levelPanel"), gameBody = el("gameBody"), resultBox = el("resultBox"), backRoom = el("backRoom");
+      const filters = el("filters"), gameCards = el("gameCards"), gameCount = el("gameCount");
+      let catalog = { categories: [], games: [] };
+      let activeCategory = "全部";
+      let state = { room: null, playerId: localStorage.getItem("couple-preview-player-id") || "", code: localStorage.getItem("couple-preview-room-code") || "" };
+
+      function currentName() { return nickname.value.trim() || localStorage.getItem("couple-preview-nickname") || "甜甜玩家"; }
+      function me() { return state.room?.players.find((player) => player.id === state.playerId); }
+      function gameConfig(id = state.room?.selectedGame) { return catalog.games.find((game) => game.id === id) || catalog.games[0]; }
+      function esc(value) { return String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c])); }
+      async function api(path, body) {
+        const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || "操作失败，请稍后再试。");
+        return data;
+      }
+      function setError(message) { errorText.textContent = message || ""; }
+      function show(view) {
+        entryPanel.style.display = view === "entry" ? "grid" : "none";
+        roomPanel.classList.toggle("active", view === "room");
+        gamePanel.classList.toggle("active", view === "game");
+      }
+      function save(data) {
+        if (data.room) { state.room = data.room; state.code = data.room.code; localStorage.setItem("couple-preview-room-code", state.code); }
+        if (data.playerId) { state.playerId = data.playerId; localStorage.setItem("couple-preview-player-id", state.playerId); }
+        localStorage.setItem("couple-preview-nickname", currentName());
+        render();
+      }
+
+      async function loadCatalog() {
+        const res = await fetch("/api/catalog", { cache: "no-store" });
+        catalog = await res.json();
+        if (!catalog.ok) catalog = { categories: [], games: [] };
+        renderCatalog();
+        render();
+      }
+
+      function renderCatalog() {
+        filters.innerHTML = ["全部", ...catalog.categories].map((cat) => `<button class="filter ${cat === activeCategory ? "active" : ""}" data-cat="${esc(cat)}">${esc(cat)}</button>`).join("");
+        filters.querySelectorAll("[data-cat]").forEach((btn) => btn.addEventListener("click", () => { activeCategory = btn.dataset.cat; renderCatalog(); }));
+        const games = catalog.games.filter((game) => activeCategory === "全部" || game.category === activeCategory);
+        gameCount.textContent = `${games.length} 个游戏`;
+        gameCards.innerHTML = games.map((game) => `
+          <article class="card ${state.room?.selectedGame === game.id ? "selected" : ""}" data-game="${game.id}">
+            <div class="bar"></div>
+            <h3>${esc(game.name)}</h3>
+            <p>${esc(game.summary)}</p>
+            <div class="meta">
+              <span>${esc(game.category)}</span><span>${esc(game.recommendedPlayers)}</span><span>难度：${esc(game.difficulty)}</span><span>${game.supportsLevels ? "支持关卡" : "轻量模式"}</span>
+            </div>
+            <p>玩法：${game.modes.map(esc).join(" / ")}</p>
+            <button data-start="${game.id}">选择游戏</button>
+          </article>`).join("");
+        gameCards.querySelectorAll("[data-game]").forEach((card) => card.addEventListener("click", () => selectGame(card.dataset.game)));
+      }
+
+      async function selectGame(gameId) {
+        if (!state.room) return;
+        if (!me()?.isHost) return setError("只有房主可以选择游戏。");
+        try {
+          const config = gameConfig(gameId);
+          save(await api("/api/select", { code: state.code, playerId: state.playerId, gameId, mode: config.modes[0], levelId: config.levels[0].levelId }));
+        } catch (error) { setError(error.message); }
+      }
+
+      function render() {
+        if (!state.room) { show("entry"); return; }
+        const room = state.room, current = me(), isHost = !!current?.isHost, selected = gameConfig();
+        statusPill.textContent = `房间 ${room.code}`;
+        roomCode.textContent = room.code;
+        members.innerHTML = room.players.map((p) => `<div class="member"><span>${esc(p.nickname)}</span><span>${p.isHost ? "房主" : "成员"} · ${p.connected ? "在线" : "重连中"}</span></div>`).join("");
+        selectedInfo.innerHTML = `<span>当前游戏：${esc(selected?.name || "未选择")}</span><span>${esc(selected?.category || "")}</span>`;
+        modeSelect.innerHTML = (selected?.modes || []).map((mode) => `<option ${mode === room.selectedMode ? "selected" : ""}>${esc(mode)}</option>`).join("");
+        levelSelect.innerHTML = (selected?.levels || []).map((level) => `<option value="${level.levelId}" ${level.levelId === room.selectedLevelId ? "selected" : ""}>${esc(level.levelName)} · ${esc(level.difficulty)}</option>`).join("");
+        modeSelect.disabled = levelSelect.disabled = !isHost || room.phase === "playing";
+        startGame.disabled = !isHost || room.players.length < 2;
+        roomHint.textContent = room.players.length < 2 ? "把分享链接和房间码发给对方，等待小伙伴加入。" : isHost ? "两个人都到啦，选择模式和关卡后开始挑战。" : "两个人都到啦，等待房主开始挑战。";
+        renderCatalog();
+        if (room.phase === "playing" || room.phase === "finished") { show("game"); renderGame(room); } else show("room");
+      }
+
+      function renderLevel(game) {
+        const level = game.level || {};
+        const percent = Math.min(100, Math.round(((game.round || 1) / Math.max(1, game.totalRounds || 1)) * 100));
+        const remaining = game.endsAt ? Math.max(0, Math.ceil((game.endsAt - Date.now()) / 1000)) : "不限";
+        levelPanel.innerHTML = `<div class="level-box"><span>${esc(level.levelName || "默认关卡")}</span><span>难度：${esc(level.difficulty || "入门")}</span></div>
+          <p class="hint">${esc(level.description || "完成本轮挑战，看看你们的甜蜜指数。")}</p>
+          <div class="meta"><span>当前进度：${game.round}/${game.totalRounds}</span><span>当前得分：${game.score ?? game.heartValue ?? 0}</span><span>剩余时间：${remaining}</span><span>目标分：${level.targetScore || "完成挑战"}</span></div>
+          <div class="progress"><span style="width:${percent}%"></span></div>`;
+      }
+
+      function renderGame(room) {
+        const game = room.game; if (!game) return;
+        renderLevel(game);
+        roundText.textContent = `${game.name} · 第 ${game.round} / ${game.totalRounds} 轮`;
+        gameBody.innerHTML = ""; resultBox.innerHTML = ""; promptText.textContent = "";
+        if (game.status === "ended") return renderResult(game);
+        if (game.uiType === "sync-choice") renderSync(game);
+        if (game.uiType === "guess") renderGuess(room, game);
+        if (game.uiType === "reaction") renderReaction(room, game);
+        if (game.uiType === "memory") renderMemory(room, game);
+        if (game.uiType === "wheel") renderWheel(room, game);
+        if (game.uiType === "relay") renderRelay(room, game);
+      }
+
+      function renderSync(game) {
+        const q = game.questions[game.round - 1]; promptText.textContent = q.prompt;
+        const answered = !!game.answers?.[state.playerId];
+        gameBody.innerHTML = `<div class="answers">${q.options.map((op) => `<button class="answer" data-answer="${esc(op)}" ${answered || game.status !== "answering" ? "disabled" : ""}>${esc(op)}</button>`).join("")}</div>`;
+        gameBody.querySelectorAll("[data-answer]").forEach((b) => b.addEventListener("click", () => sendAction({ type: "answer", answer: b.dataset.answer })));
+        if (game.status === "revealing" && game.revealed) resultBox.innerHTML = `${game.revealed.matched ? "你们也太有默契啦！" : "差一点点就心有灵犀啦，再来一题！"}<br>${Object.values(game.revealed.answers).map(esc).join(" / ")}<br>${esc(game.revealed.comment)}<br>本题 +${game.revealed.add} 分，当前 ${game.score} 分`;
+        else resultBox.textContent = `已提交：${Object.keys(game.answers || {}).length} / 2`;
+      }
+
+      function renderGuess(room, game) {
+        const q = game.questions[game.round - 1], current = me();
+        const names = Object.fromEntries(room.players.map((p) => [p.id, p.nickname]));
+        promptText.textContent = q.prompt;
+        const isAnswerer = current?.id === game.answererId, isGuesser = current?.id === game.guesserId;
+        const disabled = (game.status === "answering" && !isAnswerer) || (game.status === "guessing" && !isGuesser) || game.status === "revealing";
+        gameBody.innerHTML = `<p class="hint">${game.status === "answering" ? `由 ${esc(names[game.answererId])} 先回答，另一位稍后猜答案。` : game.status === "guessing" ? `由 ${esc(names[game.guesserId])} 猜对方的答案。` : "公布答案中。"}</p><div class="answers">${q.options.map((op) => `<button class="answer" data-guess="${esc(op)}" ${disabled ? "disabled" : ""}>${esc(op)}</button>`).join("")}</div>`;
+        gameBody.querySelectorAll("[data-guess]").forEach((b) => b.addEventListener("click", () => sendAction(game.status === "answering" ? { type: "answer", answer: b.dataset.guess } : { type: "guess", guess: b.dataset.guess })));
+        if (game.revealed) resultBox.innerHTML = `${game.revealed.matched ? "猜中啦，心思被你拿捏了！" : "没猜中，但这也很可爱。"}<br>真实答案：${esc(game.revealed.answer)}<br>猜测答案：${esc(game.revealed.guess)}<br>当前得分：${game.score}`;
+      }
+
+      function renderReaction(room, game) {
+        const names = Object.fromEntries(room.players.map((p) => [p.id, p.nickname]));
+        promptText.textContent = game.status === "clickable" ? "现在点击！" : game.prompt || "等待心动信号";
+        gameBody.innerHTML = `<div style="text-align:center"><button class="big-tap" id="tapBtn" ${game.status === "revealing" ? "disabled" : ""}>${game.status === "clickable" ? "现在点击！" : "等等"}</button></div>`;
+        el("tapBtn").addEventListener("click", () => sendAction({ type: "tap" }));
+        if (game.status === "revealing") resultBox.innerHTML = game.winnerId ? `${esc(names[game.winnerId])} 抢到啦！<br>${scoreLines(room, game.scores)}` : `${esc(names[game.foulPlayerId])} 提前点击，犯规啦。<br>${scoreLines(room, game.scores)}`;
+        else resultBox.textContent = game.status === "waiting" ? "屏幕会随机出现提示，看到“现在点击！”再点。" : "快点！";
+      }
+
+      function renderMemory(room, game) {
+        const names = Object.fromEntries(room.players.map((p) => [p.id, p.nickname]));
+        promptText.textContent = `轮到 ${esc(names[game.turnPlayerId])} 翻牌`;
+        gameBody.innerHTML = `<div class="memory-grid">${game.cards.map((c, i) => `<button class="memory-card" data-index="${i}" ${game.turnPlayerId !== state.playerId || c.matched || game.flipped.includes(i) ? "" : ""}>${c.matched || game.flipped.includes(i) ? esc(c.icon) : "?"}</button>`).join("")}</div>`;
+        gameBody.querySelectorAll("[data-index]").forEach((b) => b.addEventListener("click", () => { if (game.turnPlayerId === state.playerId) sendAction({ type: "flip", index: Number(b.dataset.index) }); }));
+        resultBox.innerHTML = `${game.lastReveal || "翻到相同图案即可得分。"}<br>${scoreLines(room, game.scores)}`;
+      }
+
+      function renderWheel(room, game) {
+        const names = Object.fromEntries(room.players.map((p) => [p.id, p.nickname]));
+        promptText.textContent = `轮到 ${esc(names[game.turnPlayerId])} 转动糖豆转盘`;
+        gameBody.innerHTML = `<div style="text-align:center"><button class="big-tap" id="spinBtn" ${game.turnPlayerId !== state.playerId ? "disabled" : ""}>转一下</button></div>`;
+        el("spinBtn").addEventListener("click", () => sendAction({ type: "spin" }));
+        resultBox.innerHTML = `${game.lastSpin ? `上次结果：${esc(game.lastSpin.label)}${game.lastSpin.question ? `<br>${esc(game.lastSpin.question)}` : ""}` : "轻轻一点，看看糖豆运气。"}<br>${scoreLines(room, game.scores)}`;
+      }
+
+      function renderRelay(room, game) {
+        const names = Object.fromEntries(room.players.map((p) => [p.id, p.nickname]));
+        promptText.textContent = `爱心接力：轮到 ${esc(names[game.requiredPlayerId])}`;
+        gameBody.innerHTML = `<div style="text-align:center"><button class="big-tap" id="relayBtn" ${game.requiredPlayerId !== state.playerId ? "disabled" : ""}>传递爱心</button></div>`;
+        el("relayBtn").addEventListener("click", () => sendAction({ type: "tap" }));
+        resultBox.innerHTML = `爱心值：${game.heartValue}<br>连击：${game.combo}<br>失误：${game.mistakes}`;
+      }
+
+      function renderResult(game) {
+        const report = game.report || {};
+        promptText.textContent = "甜蜜结果";
+        resultBox.innerHTML = `<strong>${esc(report.title || "挑战完成")}</strong><br>本局得分：${report.score ?? game.score ?? 0}<br>${esc(report.metricName || "甜蜜值")}：${report.percent ?? 0}%<br>${esc(report.message || "本局糖分严重超标！")}`;
+        gameBody.innerHTML = "";
+        document.getElementById("gameActions").innerHTML = `<button id="again">再玩一局</button><button class="secondary" id="changeGame">换个游戏</button><button class="secondary" id="hall">返回大厅</button>`;
+        el("again").onclick = () => startSelected();
+        el("changeGame").onclick = () => show("room");
+        el("hall").onclick = () => show("room");
+      }
+
+      function scoreLines(room, scores = {}) { const names = Object.fromEntries(room.players.map((p) => [p.id, p.nickname])); return Object.entries(scores).map(([id, score]) => `${esc(names[id] || "玩家")}：${score} 分`).join("<br>"); }
+      async function poll() {
+        if (!state.code || !state.playerId) return;
+        try { const data = await (await fetch(`/api/room?code=${state.code}&playerId=${encodeURIComponent(state.playerId)}`, { cache: "no-store" })).json(); if (data.ok) { state.room = data.room; render(); } } catch {}
+      }
+      async function sendAction(action) { try { save(await api("/api/action", { code: state.code, playerId: state.playerId, ...action })); } catch (e) { setError(e.message); } }
+      async function startSelected() { const cfg = gameConfig(); save(await api("/api/start", { code: state.code, playerId: state.playerId, gameId: cfg.id, mode: modeSelect.value || state.room.selectedMode, levelId: levelSelect.value || state.room.selectedLevelId })); }
+
+      createRoom.onclick = async () => { try { setError(""); save(await api("/api/create", { nickname: currentName() })); } catch (e) { setError(e.message); } };
+      joinRoom.onclick = async () => { const code = roomCodeInput.value.replace(/\D/g, "").slice(0, 6); roomCodeInput.value = code; if (!/^\d{6}$/.test(code)) return setError("请输入 6 位数字房间码。"); try { setError(""); save(await api("/api/join", { code, nickname: currentName(), playerId: state.code === code ? state.playerId : "" })); } catch (e) { setError(e.message); } };
+      modeSelect.onchange = async () => {
+        const cfg = gameConfig();
+        try {
+          save(await api("/api/select", {
+            code: state.code,
+            playerId: state.playerId,
+            gameId: cfg.id,
+            mode: modeSelect.value,
+            levelId: levelSelect.value || state.room.selectedLevelId
+          }));
+        } catch (e) {
+          setError(e.message);
+        }
+      };
+      levelSelect.onchange = async () => { const cfg = gameConfig(); try { save(await api("/api/select", { code: state.code, playerId: state.playerId, gameId: cfg.id, mode: modeSelect.value, levelId: levelSelect.value })); } catch (e) { setError(e.message); } };
+      startGame.onclick = async () => { try { setError(""); await startSelected(); } catch (e) { setError(e.message); } };
+      copyCode.onclick = async () => { try { await navigator.clipboard.writeText(state.code); roomHint.textContent = "房间码已复制。"; } catch { roomHint.textContent = `房间码：${state.code}`; } };
+      leaveRoom.onclick = async () => { try { if (state.code && state.playerId) await api("/api/leave", { code: state.code, playerId: state.playerId }); } catch {} localStorage.removeItem("couple-preview-room-code"); localStorage.removeItem("couple-preview-player-id"); state = { room: null, playerId: "", code: "" }; statusPill.textContent = "实时甜蜜连线"; render(); };
+      backRoom.onclick = () => show("room");
+
+      loadCatalog();
+      setInterval(poll, 700);
+      if (state.code && state.playerId) poll();
+    </script>
+  </body>
+</html>
